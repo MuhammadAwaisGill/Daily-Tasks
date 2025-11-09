@@ -1,6 +1,5 @@
 import 'package:daily_tasks/models/task_model.dart';
 import 'package:flutter/material.dart';
-
 import 'add_task_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,6 +13,34 @@ class _HomeScreenState extends State<HomeScreen> {
   String filter = "All";
   List<Task> tasks = [];
 
+  @override
+  void initState() {
+    super.initState();
+    _loadTasks();
+  }
+
+  Future<void> _loadTasks() async {
+    final loaded = await loadTasksFromPrefs();
+    setState(() => tasks = loaded);
+  }
+
+  Future<void> addTaskAndSave(Task task) async {
+    setState(() => tasks.add(task));
+    await saveTasksToPrefs(tasks);
+  }
+
+  Future<void> toggleTaskDone(int index) async {
+    setState(() {
+      tasks[index].toggleDone();
+    });
+    await saveTasksToPrefs(tasks);
+  }
+
+  Future<void> deleteTask(int index) async {
+    setState(() => tasks.removeAt(index));
+    await saveTasksToPrefs(tasks);
+  }
+
   void addTask(String title, String description) {
     final task = Task(title: title, description: description);
     setState(() => tasks.add(task));
@@ -24,17 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(builder: (_) => AddTaskScreen()),
     );
+
     if (result != null) {
-      setState(() => tasks.add(result));
+      await addTaskAndSave(result);
     }
-  }
-
-  void toggleTaskDone(int index) {
-    setState(() => tasks[index].toggleDone());
-  }
-
-  void deleteTask(int index) {
-    setState(() => tasks.removeAt(index));
   }
 
   @override
