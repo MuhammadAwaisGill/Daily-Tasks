@@ -1,4 +1,3 @@
-
 import 'package:daily_tasks/screens/about_screen.dart';
 import 'package:daily_tasks/screens/add_task_screen.dart';
 import 'package:daily_tasks/screens/home_screen.dart';
@@ -19,12 +18,11 @@ class DailyTasks extends StatelessWidget{
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => SplashScreen(),
-        '/home': (context) => HomeScreen(),
-        '/about': (context) => AboutScreen(),
-        '/add': (context) => AddTaskScreen(),
+        '/': (context) => const SplashScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/about': (context) => const AboutScreen(),
+        '/add': (context) => const AddTaskScreen(),
       },
     );
   }
-
 }

@@ -8,22 +8,14 @@ class Task {
   String description;
   bool isDone;
 
-  Task({
-    required this.title,
-    required this.description,
-    this.isDone = false,
-  });
+  Task({required this.title, required this.description, this.isDone = false});
 
   void toggleDone() {
     isDone = !isDone;
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'title': title,
-      'description': description,
-      'isDone': isDone,
-    };
+    return {'title': title, 'description': description, 'isDone': isDone};
   }
 
   factory Task.fromMap(Map<String, dynamic> map) {
@@ -37,31 +29,51 @@ class Task {
   String toJson() => json.encode(toMap());
 
   factory Task.fromJson(String source) => Task.fromMap(json.decode(source));
-
 }
 
 Future<List<Task>> loadTasksFromPrefs() async {
-  final prefs = await SharedPreferences.getInstance();
-  final List<String>? stringList = prefs.getStringList(tasksKey);
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String>? stringList = prefs.getStringList(tasksKey);
 
-  if (stringList == null) return <Task>[];
+    print('Loading tasks from prefs: $stringList');  // Debug
 
-  return stringList.map((s) {
-    try {
-      return Task.fromJson(s);
-    } catch (e) {
-      print('Error decoding task: $e');
-      return null;
+    if (stringList == null || stringList.isEmpty) {
+      print('No tasks found in storage');  // Debug
+      return <Task>[];
     }
-  }).whereType<Task>().toList();
+
+    final tasks = stringList
+        .map((s) {
+      try {
+        return Task.fromJson(s);
+      } catch (e) {
+        print('Error decoding task: $e');
+        return null;
+      }
+    })
+        .whereType<Task>()
+        .toList();
+
+    print('Loaded ${tasks.length} tasks');  // Debug
+    return tasks;
+  } catch (e) {
+    print('Error in loadTasksFromPrefs: $e');
+    return <Task>[];
+  }
 }
 
 Future<void> saveTasksToPrefs(List<Task> tasks) async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String> stringList = tasks.map((t) => t.toJson()).toList();
 
-  final prefs = await SharedPreferences.getInstance();
+    print('Saving ${tasks.length} tasks to prefs');  // Debug
 
-  final List<String> stringList = tasks.map((t) => t.toJson()).toList();
+    await prefs.setStringList(tasksKey, stringList);
 
-  await prefs.setStringList(tasksKey, stringList);
+    print('Tasks saved successfully');  // Debug
+  } catch (e) {
+    print('Error saving tasks: $e');
+  }
 }
-

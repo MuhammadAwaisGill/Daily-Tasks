@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -13,7 +12,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState(){
     super.initState();
-    Timer(Duration(seconds: 2), () {
+    Timer(const Duration(seconds: 2), () {
       Navigator.pushReplacementNamed(context, "/home");
     });
   }
@@ -22,14 +21,14 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.teal,
-      body: Center(
+      body: const Center(
         child: Text(
           "Welcome to your Daily Tasks App!",
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            color: Colors.greenAccent
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Colors.greenAccent
           ),
         ),
       ),
